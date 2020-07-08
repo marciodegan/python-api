@@ -1,3 +1,4 @@
+import pandas as pd
 import requests
 import pprint
 api_key = "c9189c557bf4ab7ee8c78670efeae891"
@@ -44,14 +45,21 @@ if r.status_code in range(200, 299):
             movie_ids.add(_id)
         # print(list(movie_ids))
 
+output = 'movies.csv'
+movie_data = []
 for movie_id in movie_ids:
     api_version = 3
     api_base_url = f"https://api.themoviedb.org/{api_version}"
     endpoint_path = f"/movie/{movie_id}"
     endpoint = f"{api_base_url}{endpoint_path}?api_key={api_key}"
     r = requests.get(endpoint)
-    print(r.json())
+    if r.status_code in range(200, 299):
+        data = r.json()
+        movie_data.append(data)
 
+df = pd.DataFrame(movie_data)
+print(df.head())
+df.to_csv(output, index=False)
 
 '''
 # using version 4
